@@ -42,7 +42,7 @@ const handleEmitCancel = () => {
 </script>
 
 <template>
-    <form class=" max-w-[600px] rounded-md bg-white space-y-8 px-10 py-20 mx-auto"
+    <form class="max-w-[600px] rounded-md bg-white space-y-8 px-10 py-20 mx-auto"
         @submit.prevent="handleEmitSave(currentMovie)">
         <div class="text-center text-xl w-full">
             <h1>Add a new movie</h1>

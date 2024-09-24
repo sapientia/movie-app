@@ -9,8 +9,19 @@ import MovieForm from "./components/MovieForm.vue";
  otherwise you could just use a simple ⭐️ emoji, or * character.
 */
 // import { StarIcon } from "@heroicons/vue/24/solid";
+
+const defaultMovie = {
+  "id": Number(Date.now()),
+  "name": null,
+  "description": null,
+  "image": null,
+  "rating": null,
+  "genres": [],
+  "inTheaters": false
+}
+
 const movies = reactive(items);
-const newMovie = reactive(defaultMovie);
+const currentMovie = reactive(defaultMovie);
 
 const displayModal = shallowRef(false);
 const isBeingEdited = shallowRef(false);
@@ -21,8 +32,10 @@ const isBeingEdited = shallowRef(false);
   return movies.findIndex((movie) => movie.id === id)
 })*/
 
+
+
 const getMovieIndex = async (id) => {
-  return movies.findIndex((movie) => movie.id === id)
+  return movies.findIndex((movie) => movie.id == id)
 }
 
 /** M E T H O D S */
@@ -50,16 +63,16 @@ const cancelAction = () => {
 
 
 
-const saveMovie = (newMovie) => {
-  console.log(newMovie)
+const saveMovie = (currentMovie) => {
+  console.log(currentMovie)
   if (!isBeingEdited.value) {
 
-    movies.push(newMovie)
+    movies.push(currentMovie)
     console.log(movies)
   } else {
-    const index = movies.findIndex((movie) => movie.id === newMovie.id);
+    const index = movies.findIndex((movie) => movie.id === currentMovie.id);
     if (index !== -1) {
-      movies[index] = { ...newMovie };
+      movies[index] = { ...currentMovie };
     }
   }
   triggerModal()
@@ -70,17 +83,25 @@ const triggerEdition = () => {
 }
 
 const updateMovie = async (id) => {
+  console.log(id + ' soy parent')
   triggerEdition()
   const currentIndex = await getMovieIndex(id)
-  console.log(currentIndex + ' current')
-  newMovie.id = movies[currentIndex].id
-  newMovie.name = movies[currentIndex].name
-  newMovie.description = movies[currentIndex].description
-  newMovie.image = movies[currentIndex].image
-  newMovie.rating = movies[currentIndex].rating
-  newMovie.genres = movies[currentIndex].genres
-  newMovie.inTheaters = movies[currentIndex].id
-  triggerModal()
+  console.log(currentIndex)
+  if (currentIndex !== -1) {
+    console.log('entré')
+    console.log(currentIndex + ' current')
+    console.log(movies[currentIndex].name)
+
+    currentMovie.id = movies[currentIndex].id
+    currentMovie.name = movies[currentIndex].name
+    currentMovie.description = movies[currentIndex].description
+    currentMovie.image = movies[currentIndex].image
+    currentMovie.rating = movies[currentIndex].rating
+    currentMovie.genres = movies[currentIndex].genres
+    currentMovie.inTheaters = movies[currentIndex].id
+
+    triggerModal()
+  }
 }
 
 const deleteMovie = (id) => {
@@ -91,7 +112,8 @@ const deleteMovie = (id) => {
 </script>
 
 <template>
-  {{ isBeingEdited }}
+  <p>Show Modal{{ displayModal }}</p>
+  <p>Being Edited{{ isBeingEdited }}</p>
   <div class="flex flex-row w-full h-full bg-slate-400  overflow-x-auto whitespace-nowrap flex-shrink-0">
     <div class="absolute py-5 flex">
 
@@ -100,7 +122,7 @@ const deleteMovie = (id) => {
     </div>
     <!----- E M  P I E Z A   M O D A L -->
     <div v-if="displayModal" class="w-full h-full bg-slate-800 bg-opacity-50 fixed z-10 p-4">
-      <MovieForm @handle-emit-save="saveMovie" @handle-emit-cancel="cancelAction">
+      <MovieForm @handle-emit-save="saveMovie" @handle-emit-cancel="cancelAction" :currentMovie="currentMovie">
       </MovieForm>
     </div>
     <!----- T E R M I N A   M O D A L -->
